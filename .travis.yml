@@ -1,0 +1,16 @@
+language: php
+php:
+  - 5.6
+  - 7.0
+addons:
+  code_climate:
+    repo_token: FILL_ME_IN
+before_script:
+  - sed -i '/phpdoc/d' composer.json
+  - composer install
+script:
+  - phpunit --configuration test/phpunit.xml test
+  - ./vendor/bin/phpcs --ignore=*/vendor/*,*/test/propel-schema/* --standard=PSR2 .
+  - ./vendor/bin/phpcs --standard=./vendor/athens/standard/ruleset.xml src
+after_script:
+  - vendor/bin/test-reporter

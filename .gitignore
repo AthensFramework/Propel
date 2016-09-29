@@ -1,0 +1,9 @@
+.idea/
+composer.phar
+composer.lock
+vendor/
+test.php
+build/
+
+*phpdoc-cache*
+doc/api/structure.xml
