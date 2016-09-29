@@ -2,7 +2,11 @@
 
 namespace Athens\Core\QueryWrapper;
 
-
+/**
+ * Class PropelQueryWrapper
+ *
+ * @package Athens\Core\QueryWrapper
+ */
 class PropelQueryWrapper
 {
 
@@ -222,5 +226,4 @@ class PropelQueryWrapper
         $queryName = str_replace(["TableMap", "\\Map\\"], ["Query", "\\"], $this->tableMapClass);
         return $queryName::create();
     }
-
 }

@@ -13,8 +13,6 @@ use Athens\Core\Field\FieldInterface;
 use Athens\Core\Field\FieldBuilder;
 use Athens\Core\Choice\ChoiceBuilder;
 use Athens\Core\Choice\ChoiceInterface;
-use Athens\Core\Section\SectionBuilder;
-use Athens\Core\Writable\WritableInterface;
 
 /**
  * Class ORMUtils provides static methods for interpreting and interfacing
@@ -60,11 +58,17 @@ class PropelObjectWrapper extends AbstractObjectWrapper implements ObjectWrapper
         $this->tableMapClass = $object::TABLE_MAP;
     }
 
+    /**
+     * @return mixed
+     */
     public function getPrimaryKey()
     {
         return $this->object->getPrimaryKey();
     }
 
+    /**
+     * @return $this
+     */
     public function save()
     {
         $this->object->save();
@@ -72,11 +76,17 @@ class PropelObjectWrapper extends AbstractObjectWrapper implements ObjectWrapper
         return $this;
     }
 
+    /**
+     * @return void
+     */
     public function delete()
     {
         $this->object->delete();
     }
 
+    /**
+     * @return string
+     */
     public function getTitleCasedObjectName()
     {
         $tableMap = $this->getClassTableMap();
@@ -84,7 +94,10 @@ class PropelObjectWrapper extends AbstractObjectWrapper implements ObjectWrapper
 
         return ucwords(str_replace('_', ' ', $tableName));
     }
-    
+
+    /**
+     * @return string[]
+     */
     protected function getKeys()
     {
         if ($this->keys === null) {
@@ -237,7 +250,7 @@ class PropelObjectWrapper extends AbstractObjectWrapper implements ObjectWrapper
      *
      * Expects that $fields contains a set of $fieldName => $field pairs.
      *
-     * @param FieldInterface[]      $fields
+     * @param FieldInterface[] $fields
      * @return void
      */
     public function fillFromFields(array $fields)
@@ -267,7 +280,10 @@ class PropelObjectWrapper extends AbstractObjectWrapper implements ObjectWrapper
             }
         }
     }
-    
+
+    /**
+     * @return string[]
+     */
     protected function getColumnPhpNames()
     {
         $columnPhpNames = [];
@@ -375,8 +391,6 @@ class PropelObjectWrapper extends AbstractObjectWrapper implements ObjectWrapper
     }
 
     /**
-     * TODO: Remove label generation from this method
-     *
      * @return Field[]
      */
     protected function fieldsFromColumns()
@@ -408,7 +422,10 @@ class PropelObjectWrapper extends AbstractObjectWrapper implements ObjectWrapper
                 $query = $queryName::create();
 
                 foreach ($query->find() as $this->object) {
-                    $choices[] = ChoiceBuilder::begin()->setValue($this->object->getId())->setAlias((string)$this->object)->build();
+                    $choices[] = ChoiceBuilder::begin()
+                        ->setValue($this->object->getId())
+                        ->setAlias((string)$this->object)
+                        ->build();
                 }
                 $fieldType = FieldBuilder::TYPE_CHOICE;
                 $fieldRequired = false;
@@ -445,10 +462,11 @@ class PropelObjectWrapper extends AbstractObjectWrapper implements ObjectWrapper
         return $tableMap->getPhpName();
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return (string)($this->object);
     }
-
-
 }

@@ -48,11 +48,19 @@ class PropelObjectWrapperTest extends PHPUnit_Framework_TestCase
 
         /** TestClass */
         $this->assertEquals(
-            ['TestClass.Id', 'TestClass.FieldSmallVarchar', 'TestClass.FieldLargeVarchar', 'TestClass.FieldInteger', 'TestClass.FieldFloat', 'TestClass.FieldTimestamp', 'TestClass.FieldBoolean', 'TestClass.RequiredField', 'TestClass.UnrequiredField'],
+            [
+                'TestClass.Id', 'TestClass.FieldSmallVarchar', 'TestClass.FieldLargeVarchar', 'TestClass.FieldInteger',
+                'TestClass.FieldFloat', 'TestClass.FieldTimestamp', 'TestClass.FieldBoolean', 'TestClass.RequiredField',
+                'TestClass.UnrequiredField'
+            ],
             array_keys($wrappedTestClass->getQualifiedPascalCasedColumnNames())
         );
         $this->assertEquals(
-            ['TestClass.Id', 'TestClass.FieldSmallVarchar', 'TestClass.FieldLargeVarchar', 'TestClass.FieldInteger', 'TestClass.FieldFloat', 'TestClass.FieldTimestamp', 'TestClass.FieldBoolean', 'TestClass.RequiredField', 'TestClass.UnrequiredField'],
+            [
+                'TestClass.Id', 'TestClass.FieldSmallVarchar', 'TestClass.FieldLargeVarchar', 'TestClass.FieldInteger',
+                'TestClass.FieldFloat', 'TestClass.FieldTimestamp', 'TestClass.FieldBoolean', 'TestClass.RequiredField',
+                'TestClass.UnrequiredField'
+            ],
             array_values($wrappedTestClass->getQualifiedPascalCasedColumnNames())
         );
 
@@ -96,11 +104,18 @@ class PropelObjectWrapperTest extends PHPUnit_Framework_TestCase
 
         /** TestClass */
         $this->assertEquals(
-            ['TestClass.Id', 'TestClass.FieldSmallVarchar', 'TestClass.FieldLargeVarchar', 'TestClass.FieldInteger', 'TestClass.FieldFloat', 'TestClass.FieldTimestamp', 'TestClass.FieldBoolean', 'TestClass.RequiredField', 'TestClass.UnrequiredField'],
+            [
+                'TestClass.Id', 'TestClass.FieldSmallVarchar', 'TestClass.FieldLargeVarchar', 'TestClass.FieldInteger',
+                'TestClass.FieldFloat', 'TestClass.FieldTimestamp', 'TestClass.FieldBoolean', 'TestClass.RequiredField',
+                'TestClass.UnrequiredField'
+            ],
             array_keys($wrappedTestClass->getUnqualifiedPascalCasedColumnNames())
         );
         $this->assertEquals(
-            ['Id', 'FieldSmallVarchar', 'FieldLargeVarchar', 'FieldInteger', 'FieldFloat', 'FieldTimestamp', 'FieldBoolean', 'RequiredField', 'UnrequiredField'],
+            [
+                'Id', 'FieldSmallVarchar', 'FieldLargeVarchar', 'FieldInteger', 'FieldFloat', 'FieldTimestamp',
+                'FieldBoolean', 'RequiredField', 'UnrequiredField'
+            ],
             array_values($wrappedTestClass->getUnqualifiedPascalCasedColumnNames())
         );
 
@@ -144,11 +159,19 @@ class PropelObjectWrapperTest extends PHPUnit_Framework_TestCase
 
         /** TestClass */
         $this->assertEquals(
-            ['TestClass.Id', 'TestClass.FieldSmallVarchar', 'TestClass.FieldLargeVarchar', 'TestClass.FieldInteger', 'TestClass.FieldFloat', 'TestClass.FieldTimestamp', 'TestClass.FieldBoolean', 'TestClass.RequiredField', 'TestClass.UnrequiredField'],
+            [
+                'TestClass.Id', 'TestClass.FieldSmallVarchar', 'TestClass.FieldLargeVarchar', 'TestClass.FieldInteger',
+                'TestClass.FieldFloat', 'TestClass.FieldTimestamp', 'TestClass.FieldBoolean', 'TestClass.RequiredField',
+                'TestClass.UnrequiredField'
+            ],
             array_keys($wrappedTestClass->getQualifiedTitleCasedColumnNames())
         );
         $this->assertEquals(
-            ['Test Class Id', 'Test Class Field Small Varchar', 'Test Class Field Large Varchar', 'Test Class Field Integer', 'Test Class Field Float', 'Test Class Field Timestamp', 'Test Class Field Boolean', 'Test Class Required Field', 'Test Class Unrequired Field'],
+            [
+                'Test Class Id', 'Test Class Field Small Varchar', 'Test Class Field Large Varchar',
+                'Test Class Field Integer', 'Test Class Field Float', 'Test Class Field Timestamp',
+                'Test Class Field Boolean', 'Test Class Required Field', 'Test Class Unrequired Field'
+            ],
             array_values($wrappedTestClass->getQualifiedTitleCasedColumnNames())
         );
 
@@ -192,11 +215,18 @@ class PropelObjectWrapperTest extends PHPUnit_Framework_TestCase
 
         /** TestClass */
         $this->assertEquals(
-            ['TestClass.Id', 'TestClass.FieldSmallVarchar', 'TestClass.FieldLargeVarchar', 'TestClass.FieldInteger', 'TestClass.FieldFloat', 'TestClass.FieldTimestamp', 'TestClass.FieldBoolean', 'TestClass.RequiredField', 'TestClass.UnrequiredField'],
+            [
+                'TestClass.Id', 'TestClass.FieldSmallVarchar', 'TestClass.FieldLargeVarchar', 'TestClass.FieldInteger',
+                'TestClass.FieldFloat', 'TestClass.FieldTimestamp', 'TestClass.FieldBoolean', 'TestClass.RequiredField',
+                'TestClass.UnrequiredField'
+            ],
             array_keys($wrappedTestClass->getUnqualifiedTitleCasedColumnNames())
         );
         $this->assertEquals(
-            ['Id', 'Field Small Varchar', 'Field Large Varchar', 'Field Integer', 'Field Float', 'Field Timestamp', 'Field Boolean', 'Required Field', 'Unrequired Field'],
+            [
+                'Id', 'Field Small Varchar', 'Field Large Varchar', 'Field Integer', 'Field Float', 'Field Timestamp',
+                'Field Boolean', 'Required Field', 'Unrequired Field'
+            ],
             array_values($wrappedTestClass->getUnqualifiedTitleCasedColumnNames())
         );
 
@@ -351,7 +381,6 @@ class PropelObjectWrapperTest extends PHPUnit_Framework_TestCase
         $testClass->expects($this->once())->method('save');
 
         $wrappedTestClass->save();
-
     }
 
     public function testDelete()

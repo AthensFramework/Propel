@@ -4,13 +4,13 @@ php:
   - 7.0
 addons:
   code_climate:
-    repo_token: FILL_ME_IN
+    repo_token: 8a39fc3943f9d35b5372a3788281315ba639580a54a440b64b21455e330b9c88
 before_script:
   - sed -i '/phpdoc/d' composer.json
   - composer install
 script:
   - phpunit --configuration test/phpunit.xml test
-  - ./vendor/bin/phpcs --ignore=*/vendor/*,*/test/propel-schema/* --standard=PSR2 .
+  - ./vendor/bin/phpcs --ignore=*/vendor/*,*/test/schema/* --standard=PSR2 .
   - ./vendor/bin/phpcs --standard=./vendor/athens/standard/ruleset.xml src
 after_script:
   - vendor/bin/test-reporter
