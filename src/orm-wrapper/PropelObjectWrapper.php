@@ -173,10 +173,6 @@ class PropelObjectWrapper extends AbstractObjectWrapper implements ObjectWrapper
                 $initial = $this->object->{"get" . $phpName}();
             }
 
-            if ($fieldName === 'TestClass.FieldTimestamp') {
-                echo $initial->format('c');
-            }
-
             $fields[$fieldName]->setInitial($initial);
         }
 

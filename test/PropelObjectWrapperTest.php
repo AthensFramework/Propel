@@ -272,7 +272,7 @@ class PropelObjectWrapperTest extends PHPUnit_Framework_TestCase
             'TestClass.FieldLargeVarchar' => (string)rand(),
             'TestClass.FieldInteger' => rand(),
             'TestClass.FieldFloat' => mt_rand() / mt_getrandmax(),
-            'TestClass.FieldTimestamp' => '2016-09-28T13:40:10-07:00',
+            'TestClass.FieldTimestamp' => date('c'),
             'TestClass.FieldBoolean' => (boolean)(rand(0, 1)),
             'TestClass.RequiredField' => (string)rand(),
             'TestClass.UnrequiredField' => (string)rand(),
@@ -324,7 +324,7 @@ class PropelObjectWrapperTest extends PHPUnit_Framework_TestCase
             'TestClass.FieldLargeVarchar' => (string)rand(),
             'TestClass.FieldInteger' => rand(),
             'TestClass.FieldFloat' => mt_rand() / mt_getrandmax(),
-            'TestClass.FieldTimestamp' => '2016-09-28T13:40:10-07:00',
+            'TestClass.FieldTimestamp' => date('c'),
             'TestClass.FieldBoolean' => (boolean)(rand(0, 1)),
             'TestClass.RequiredField' => (string)rand(),
             'TestClass.UnrequiredField' => (string)rand(),
@@ -370,7 +370,30 @@ class PropelObjectWrapperTest extends PHPUnit_Framework_TestCase
 
     public function testFillFromFields()
     {
-        $this->fail('Not Written Yet');
+        $testClass = new TestClass();
+        $wrappedTestClass = new PropelObjectWrapper($testClass);
+
+        $values = [
+            'TestClass.Id' => null,
+            'TestClass.FieldSmallVarchar' => (string)rand(),
+            'TestClass.FieldLargeVarchar' => (string)rand(),
+            'TestClass.FieldInteger' => rand(),
+            'TestClass.FieldFloat' => mt_rand() / mt_getrandmax(),
+            'TestClass.FieldTimestamp' => date('c'),
+            'TestClass.FieldBoolean' => (boolean)(rand(0, 1)),
+            'TestClass.RequiredField' => (string)rand(),
+            'TestClass.UnrequiredField' => (string)rand(),
+        ];
+
+        $fields = $wrappedTestClass->getFields();
+
+        foreach ($fields as $fieldName => $field) {
+            $field->setValidatedData($values[$fieldName]);
+        }
+
+        $wrappedTestClass->fillFromFields($fields);
+
+        $this->assertEquals($values, $wrappedTestClass->getValues());
     }
 
     public function testSave()
