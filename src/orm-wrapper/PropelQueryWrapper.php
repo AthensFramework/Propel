@@ -1,14 +1,132 @@
 <?php
 
-namespace Athens\Core\QueryWrapper;
+namespace Athens\Propel\ORMWrapper;
+
+use Athens\Core\ORMWrapper\AbstractQueryWrapper;
+use Athens\Core\ORMWrapper\ObjectWrapperInterface;
+use Athens\Core\ORMWrapper\QueryWrapperInterface;
+use AthensTest\Base\TestClassQuery;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\Map\TableMap;
 
 /**
  * Class PropelQueryWrapper
  *
  * @package Athens\Core\QueryWrapper
  */
-class PropelQueryWrapper
+class PropelQueryWrapper extends AbstractQueryWrapper implements QueryWrapperInterface
 {
+    use PropelORMWrapperTrait;
+    
+    /** @var ModelCriteria */
+    protected $query;
+
+    /**
+     * PropelQueryWrapper constructor.
+     *
+     * @param ModelCriteria $query
+     */
+    public function __construct(ModelCriteria $query)
+    {
+        $this->query = $query;
+
+        $this->setTableMap($query->getTableMap());
+    }
+
+    /**
+     * Does not handle multiple primary keys.
+     *
+     * @param mixed $primaryKeyValue
+     * @return ObjectWrapperInterface|null
+     */
+    public function findOneByPrimaryKey($primaryKeyValue)
+    {
+        $primaryKeys = $this->getTableMap()->getPrimaryKeys();
+        $primaryKeyPhpName = array_values($primaryKeys)[0]->getPhpName();
+
+        $result = $this->query->{"findOneBy$primaryKeyPhpName"}($primaryKeyValue);
+
+        $result = $result === null ? null : new PropelObjectWrapper($result);
+        
+        return $result;
+    }
+
+    /**
+     * @return PropelCollectionWrapper
+     */
+    public function find()
+    {
+        $collection = $this->query->find();
+        return new PropelCollectionWrapper($collection);
+    }
+
+    /**
+     * @param string $columnName
+     * @param mixed  $condition
+     * @return $this
+     */
+    public function orderBy($columnName, $condition)
+    {
+        $this->query->orderBy($columnName, $condition);
+        return $this;
+    }
+
+    /**
+     * @param string $columnName
+     * @param mixed  $value
+     * @param string $comparison
+     * @return $this
+     */
+    public function filterBy($columnName, $value, $comparison = QueryWrapperInterface::CONDITION_EQUAL)
+    {
+        $this->query->filterBy($columnName, $value, $comparison);
+        return $this;
+    }
+
+    /**
+     * @param integer $offset
+     * @return $this
+     */
+    public function offset($offset)
+    {
+        $this->query->offset($offset);
+        return $this;
+    }
+
+    /**
+     * @param integer $limit
+     * @return $this
+     */
+    public function limit($limit)
+    {
+        $this->query->limit($limit);
+        return $this;
+    }
+
+    /**
+     * @return ObjectWrapperInterface
+     */
+    public function createObject()
+    {
+        $className = $this->query->getModelName();
+        return new PropelObjectWrapper(new $className());
+    }
+
+    /**
+     * @return integer
+     */
+    public function count()
+    {
+        return $this->query->count();
+    }
+
+    /**
+     * @return boolean
+     */
+    public function exists()
+    {
+        return $this->query->exists();
+    }
 
     /**
      * @param ModelCriteria $query

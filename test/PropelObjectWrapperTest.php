@@ -95,7 +95,7 @@ class PropelObjectWrapperTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testUnqualifiedPascalCasedColumnNames()
+    public function testGetUnqualifiedPascalCasedColumnNames()
     {
         $wrappedTestClass = new PropelObjectWrapper(new TestClass());
         $wrappedTestClassTwo = new PropelObjectWrapper(new TestClassTwo());
@@ -206,7 +206,7 @@ class PropelObjectWrapperTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testUnqualifiedTitleCasedColumnNames()
+    public function testGetUnqualifiedTitleCasedColumnNames()
     {
         $wrappedTestClass = new PropelObjectWrapper(new TestClass());
         $wrappedTestClassTwo = new PropelObjectWrapper(new TestClassTwo());
