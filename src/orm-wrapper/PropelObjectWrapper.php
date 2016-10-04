@@ -171,7 +171,7 @@ class PropelObjectWrapper extends AbstractObjectWrapper implements ObjectWrapper
      * Expects that $fields contains a set of $fieldName => $field pairs.
      *
      * @param FieldInterface[] $fields
-     * @return void
+     * @return ObjectWrapperInterface
      */
     public function fillFromFields(array $fields)
     {
@@ -199,6 +199,8 @@ class PropelObjectWrapper extends AbstractObjectWrapper implements ObjectWrapper
                 }
             }
         }
+
+        return $this;
     }
 
     /**

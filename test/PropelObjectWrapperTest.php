@@ -2,6 +2,7 @@
 
 namespace Athens\Core\Test;
 
+use Athens\Core\ORMWrapper\ObjectWrapperInterface;
 use PHPUnit_Framework_TestCase;
 
 use Athens\Propel\ORMWrapper\PropelObjectWrapper;
@@ -391,9 +392,10 @@ class PropelObjectWrapperTest extends PHPUnit_Framework_TestCase
             $field->setValidatedData($values[$fieldName]);
         }
 
-        $wrappedTestClass->fillFromFields($fields);
+        $result = $wrappedTestClass->fillFromFields($fields);
 
         $this->assertEquals($values, $wrappedTestClass->getValues());
+        $this->assertInstanceOf(ObjectWrapperInterface::class, $result);
     }
 
     public function testSave()
