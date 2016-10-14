@@ -16,10 +16,10 @@ class PropelObjectWrapperTest extends PHPUnit_Framework_TestCase
 {
     public function testGetPascalCasedObjectName()
     {
-        $wrappedTestClass = new PropelObjectWrapper(new TestClass());
-        $wrappedTestClassTwo = new PropelObjectWrapper(new TestClassTwo());
-        $wrappedParentClass = new PropelObjectWrapper(new ParentClass());
-        $wrappedChildClass = new PropelObjectWrapper(new ChildClass());
+        $wrappedTestClass = PropelObjectWrapper::fromObject(new TestClass());
+        $wrappedTestClassTwo = PropelObjectWrapper::fromObject(new TestClassTwo());
+        $wrappedParentClass = PropelObjectWrapper::fromObject(new ParentClass());
+        $wrappedChildClass = PropelObjectWrapper::fromObject(new ChildClass());
 
         $this->assertEquals("TestClass", $wrappedTestClass->getPascalCasedObjectName());
         $this->assertEquals("TestClassTwo", $wrappedTestClassTwo->getPascalCasedObjectName());
@@ -29,10 +29,10 @@ class PropelObjectWrapperTest extends PHPUnit_Framework_TestCase
 
     public function testGetTitleCasedObjectName()
     {
-        $wrappedTestClass = new PropelObjectWrapper(new TestClass());
-        $wrappedTestClassTwo = new PropelObjectWrapper(new TestClassTwo());
-        $wrappedParentClass = new PropelObjectWrapper(new ParentClass());
-        $wrappedChildClass = new PropelObjectWrapper(new ChildClass());
+        $wrappedTestClass = PropelObjectWrapper::fromObject(new TestClass());
+        $wrappedTestClassTwo = PropelObjectWrapper::fromObject(new TestClassTwo());
+        $wrappedParentClass = PropelObjectWrapper::fromObject(new ParentClass());
+        $wrappedChildClass = PropelObjectWrapper::fromObject(new ChildClass());
 
         $this->assertEquals("Test Class", $wrappedTestClass->getTitleCasedObjectName());
         $this->assertEquals("Test Class Two", $wrappedTestClassTwo->getTitleCasedObjectName());
@@ -42,10 +42,10 @@ class PropelObjectWrapperTest extends PHPUnit_Framework_TestCase
 
     public function testGetQualifiedPascalCasedColumnNames()
     {
-        $wrappedTestClass = new PropelObjectWrapper(new TestClass());
-        $wrappedTestClassTwo = new PropelObjectWrapper(new TestClassTwo());
-        $wrappedParentClass = new PropelObjectWrapper(new ParentClass());
-        $wrappedChildClass = new PropelObjectWrapper(new ChildClass());
+        $wrappedTestClass = PropelObjectWrapper::fromObject(new TestClass());
+        $wrappedTestClassTwo = PropelObjectWrapper::fromObject(new TestClassTwo());
+        $wrappedParentClass = PropelObjectWrapper::fromObject(new ParentClass());
+        $wrappedChildClass = PropelObjectWrapper::fromObject(new ChildClass());
 
         /** TestClass */
         $this->assertEquals(
@@ -98,10 +98,10 @@ class PropelObjectWrapperTest extends PHPUnit_Framework_TestCase
 
     public function testGetUnqualifiedPascalCasedColumnNames()
     {
-        $wrappedTestClass = new PropelObjectWrapper(new TestClass());
-        $wrappedTestClassTwo = new PropelObjectWrapper(new TestClassTwo());
-        $wrappedParentClass = new PropelObjectWrapper(new ParentClass());
-        $wrappedChildClass = new PropelObjectWrapper(new ChildClass());
+        $wrappedTestClass = PropelObjectWrapper::fromObject(new TestClass());
+        $wrappedTestClassTwo = PropelObjectWrapper::fromObject(new TestClassTwo());
+        $wrappedParentClass = PropelObjectWrapper::fromObject(new ParentClass());
+        $wrappedChildClass = PropelObjectWrapper::fromObject(new ChildClass());
 
         /** TestClass */
         $this->assertEquals(
@@ -153,10 +153,10 @@ class PropelObjectWrapperTest extends PHPUnit_Framework_TestCase
 
     public function testGetQualifiedTitleCasedColumnNames()
     {
-        $wrappedTestClass = new PropelObjectWrapper(new TestClass());
-        $wrappedTestClassTwo = new PropelObjectWrapper(new TestClassTwo());
-        $wrappedParentClass = new PropelObjectWrapper(new ParentClass());
-        $wrappedChildClass = new PropelObjectWrapper(new ChildClass());
+        $wrappedTestClass = PropelObjectWrapper::fromObject(new TestClass());
+        $wrappedTestClassTwo = PropelObjectWrapper::fromObject(new TestClassTwo());
+        $wrappedParentClass = PropelObjectWrapper::fromObject(new ParentClass());
+        $wrappedChildClass = PropelObjectWrapper::fromObject(new ChildClass());
 
         /** TestClass */
         $this->assertEquals(
@@ -209,10 +209,10 @@ class PropelObjectWrapperTest extends PHPUnit_Framework_TestCase
 
     public function testGetUnqualifiedTitleCasedColumnNames()
     {
-        $wrappedTestClass = new PropelObjectWrapper(new TestClass());
-        $wrappedTestClassTwo = new PropelObjectWrapper(new TestClassTwo());
-        $wrappedParentClass = new PropelObjectWrapper(new ParentClass());
-        $wrappedChildClass = new PropelObjectWrapper(new ChildClass());
+        $wrappedTestClass = PropelObjectWrapper::fromObject(new TestClass());
+        $wrappedTestClassTwo = PropelObjectWrapper::fromObject(new TestClassTwo());
+        $wrappedParentClass = PropelObjectWrapper::fromObject(new ParentClass());
+        $wrappedChildClass = PropelObjectWrapper::fromObject(new ChildClass());
 
         /** TestClass */
         $this->assertEquals(
@@ -265,7 +265,7 @@ class PropelObjectWrapperTest extends PHPUnit_Framework_TestCase
     public function testGetFields()
     {
         $testClass = new TestClass();
-        $wrappedTestClass = new PropelObjectWrapper($testClass);
+        $wrappedTestClass = PropelObjectWrapper::fromObject($testClass);
 
         $values = [
             'TestClass.Id' => null,
@@ -317,7 +317,7 @@ class PropelObjectWrapperTest extends PHPUnit_Framework_TestCase
     public function testGetValues()
     {
         $testClass = new TestClass();
-        $wrappedTestClass = new PropelObjectWrapper($testClass);
+        $wrappedTestClass = PropelObjectWrapper::fromObject($testClass);
 
         $values = [
             'TestClass.Id' => null,
@@ -342,7 +342,7 @@ class PropelObjectWrapperTest extends PHPUnit_Framework_TestCase
     public function testGetValuesWithInheritance()
     {
         $childClass = new ChildClass();
-        $wrappedTestClass = new PropelObjectWrapper($childClass);
+        $wrappedTestClass = PropelObjectWrapper::fromObject($childClass);
 
         $values = [
             'ChildClass.Id' => null,
@@ -362,7 +362,7 @@ class PropelObjectWrapperTest extends PHPUnit_Framework_TestCase
     public function testGetPrimaryKey()
     {
         $testClass = $this->createMock(TestClass::class);
-        $wrappedTestClass = new PropelObjectWrapper($testClass);
+        $wrappedTestClass = PropelObjectWrapper::fromObject($testClass);
 
         $testClass->expects($this->once())->method('getPrimaryKey');
 
@@ -372,7 +372,7 @@ class PropelObjectWrapperTest extends PHPUnit_Framework_TestCase
     public function testFillFromFields()
     {
         $testClass = new TestClass();
-        $wrappedTestClass = new PropelObjectWrapper($testClass);
+        $wrappedTestClass = PropelObjectWrapper::fromObject($testClass);
 
         $values = [
             'TestClass.Id' => null,
@@ -401,7 +401,7 @@ class PropelObjectWrapperTest extends PHPUnit_Framework_TestCase
     public function testSave()
     {
         $testClass = $this->createMock(TestClass::class);
-        $wrappedTestClass = new PropelObjectWrapper($testClass);
+        $wrappedTestClass = PropelObjectWrapper::fromObject($testClass);
 
         $testClass->expects($this->once())->method('save');
 
@@ -411,7 +411,7 @@ class PropelObjectWrapperTest extends PHPUnit_Framework_TestCase
     public function testDelete()
     {
         $testClass = $this->createMock(TestClass::class);
-        $wrappedTestClass = new PropelObjectWrapper($testClass);
+        $wrappedTestClass = PropelObjectWrapper::fromObject($testClass);
 
         $testClass->expects($this->once())->method('delete');
 
@@ -421,7 +421,7 @@ class PropelObjectWrapperTest extends PHPUnit_Framework_TestCase
     public function testToString()
     {
         $testClass = $this->createMock(TestClass::class);
-        $wrappedTestClass = new PropelObjectWrapper($testClass);
+        $wrappedTestClass = PropelObjectWrapper::fromObject($testClass);
 
         $testClass->method('__toString')->willReturn('');
 
