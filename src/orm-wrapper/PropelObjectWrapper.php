@@ -38,19 +38,26 @@ class PropelObjectWrapper extends AbstractObjectWrapper implements ObjectWrapper
     ];
     
     /** @var ActiveRecordInterface */
-    protected $object;
+    public $object;
 
     /**
      * Receive and wrap a Propel ORM entity.
      *
-     * @param ActiveRecordInterface $object
+     * @param mixed $object
      */
-    public function __construct(ActiveRecordInterface $object)
+    protected function __construct($object)
     {
         $this->object = $object;
-        
         $tableMapClass = $object::TABLE_MAP;
         $this->setTableMap($tableMapClass::getTableMap());
+    }
+
+    /**
+     * @return ActiveRecordInterface
+     */
+    protected function getObject()
+    {
+        return $this->object;
     }
 
     /**
@@ -58,7 +65,7 @@ class PropelObjectWrapper extends AbstractObjectWrapper implements ObjectWrapper
      */
     public function getPrimaryKey()
     {
-        return $this->object->getPrimaryKey();
+        return $this->getObject()->getPrimaryKey();
     }
 
     /**
@@ -66,7 +73,7 @@ class PropelObjectWrapper extends AbstractObjectWrapper implements ObjectWrapper
      */
     public function save()
     {
-        $this->object->save();
+        $this->getObject()->save();
 
         return $this;
     }
@@ -76,7 +83,7 @@ class PropelObjectWrapper extends AbstractObjectWrapper implements ObjectWrapper
      */
     public function delete()
     {
-        $this->object->delete();
+        $this->getObject()->delete();
     }
 
     /**
@@ -87,7 +94,7 @@ class PropelObjectWrapper extends AbstractObjectWrapper implements ObjectWrapper
         $objectName = $this->getPascalCasedObjectName();
 
         $values = [];
-        foreach ($this->object->toArray() as $unqualifiedPascalCasedColumnName => $value) {
+        foreach ($this->getObject()->toArray() as $unqualifiedPascalCasedColumnName => $value) {
             $values[$objectName . '.' . $unqualifiedPascalCasedColumnName] = $value;
         }
 
@@ -109,9 +116,9 @@ class PropelObjectWrapper extends AbstractObjectWrapper implements ObjectWrapper
             $phpName = $column->getPhpName();
 
             if ($column->isForeignKey() === true) {
-                $initial = $this->object->{"get" . str_replace("Id", "", $phpName)}();
+                $initial = $this->getObject()->{"get" . str_replace("Id", "", $phpName)}();
             } else {
-                $initial = $this->object->{"get" . $phpName}();
+                $initial = $this->getObject()->{"get" . $phpName}();
             }
 
             $fields[$fieldName]->setInitial($initial);
@@ -189,12 +196,12 @@ class PropelObjectWrapper extends AbstractObjectWrapper implements ObjectWrapper
                 if ($column->isPrimaryKey() === true) {
                     // Don't accept form input for primary keys. These should be set at object creation.
                 } elseif ($column->isForeignKey() === true) {
-                    $this->object->{"set" . $column->getPhpName()}($value);
+                    $this->getObject()->{"set" . $column->getPhpName()}($value);
                     $field->setInitial($field->getValidatedData());
                 } elseif ($column->getPhpName() === "UpdatedAt" || $column->getPhpName() === "CreatedAt") {
                     // Don't accept updates to the UpdatedAt or CreatedAt timestamps
                 } else {
-                    $this->object->{"set" . $column->getPhpName()}($value);
+                    $this->getObject()->{"set" . $column->getPhpName()}($value);
                     $field->setInitial($field->getValidatedData());
                 }
             }
@@ -258,10 +265,10 @@ class PropelObjectWrapper extends AbstractObjectWrapper implements ObjectWrapper
 
                 $query = $queryName::create();
 
-                foreach ($query->find() as $this->object) {
+                foreach ($query->find() as $object) {
                     $choices[] = ChoiceBuilder::begin()
-                        ->setValue($this->object->getId())
-                        ->setAlias((string)$this->object)
+                        ->setValue($object->getId())
+                        ->setAlias((string)$object)
                         ->build();
                 }
                 $fieldType = FieldBuilder::TYPE_CHOICE;
@@ -292,6 +299,16 @@ class PropelObjectWrapper extends AbstractObjectWrapper implements ObjectWrapper
      */
     public function __toString()
     {
-        return (string)($this->object);
+        return (string)($this->getObject());
+    }
+
+    /**
+     * @param string $name
+     * @param array  $arguments
+     * @return mixed
+     */
+    public function __call($name, array $arguments)
+    {
+        return call_user_func_array([$this->getObject(), $name], $arguments);
     }
 }
