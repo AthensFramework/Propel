@@ -7,13 +7,14 @@ use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Collection\CollectionIterator;
 
 use Athens\Core\ORMWrapper\CollectionWrapperInterface;
+use Athens\Core\ORMWrapper\AbstractCollectionWrapper;
 
 /**
  * Class PropelCollectionWrapper
  *
  * @package Athens\Propel\ORMWrapper
  */
-class PropelCollectionWrapper implements CollectionWrapperInterface
+class PropelCollectionWrapper extends AbstractCollectionWrapper
 {
     /** @var ObjectCollection */
     protected $collection;
@@ -77,7 +78,7 @@ class PropelCollectionWrapper implements CollectionWrapperInterface
      */
     public function current()
     {
-        return new PropelObjectWrapper($this->iterator->current());
+        return PropelObjectWrapper::fromObject($this->iterator->current());
     }
 
     /**
