@@ -2,12 +2,14 @@
 
 namespace Athens\Propel\ORMWrapper;
 
+use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\Map\TableMap;
+use Propel\Runtime\ActiveQuery\Criteria;
+
 use Athens\Core\ORMWrapper\AbstractQueryWrapper;
 use Athens\Core\ORMWrapper\ObjectWrapperInterface;
 use Athens\Core\ORMWrapper\QueryWrapperInterface;
 use AthensTest\Base\TestClassQuery;
-use Propel\Runtime\ActiveQuery\ModelCriteria;
-use Propel\Runtime\Map\TableMap;
 
 /**
  * Class PropelQueryWrapper
@@ -20,6 +22,19 @@ class PropelQueryWrapper extends AbstractQueryWrapper implements QueryWrapperInt
     
     /** @var ModelCriteria */
     protected $query;
+
+    /**
+     * @var string[]
+     */
+    protected $conditionMap = [
+        QueryWrapperInterface::CONDITION_EQUAL => Criteria::EQUAL,
+        QueryWrapperInterface::CONDITION_NOT_EQUAL => Criteria::NOT_EQUAL,
+        QueryWrapperInterface::CONDITION_CONTAINS => Criteria::CONTAINS_SOME,
+        QueryWrapperInterface::CONDITION_GREATER_THAN => Criteria::GREATER_THAN,
+        QueryWrapperInterface::CONDITION_GREATER_THAN_OR_EQUAL => Criteria::GREATER_EQUAL,
+        QueryWrapperInterface::CONDITION_LESS_THAN => Criteria::LESS_THAN,
+        QueryWrapperInterface::CONDITION_LESS_THAN_OR_EQUAL => Criteria::LESS_EQUAL,
+    ];
 
     /**
      * PropelQueryWrapper constructor.
@@ -46,7 +61,7 @@ class PropelQueryWrapper extends AbstractQueryWrapper implements QueryWrapperInt
 
         $result = $this->query->{"findOneBy$primaryKeyPhpName"}($primaryKeyValue);
 
-        $result = $result === null ? null : new PropelObjectWrapper($result);
+        $result = $result === null ? null : PropelObjectWrapper::fromObject($result);
         
         return $result;
     }
@@ -79,6 +94,12 @@ class PropelQueryWrapper extends AbstractQueryWrapper implements QueryWrapperInt
      */
     public function filterBy($columnName, $value, $comparison = QueryWrapperInterface::CONDITION_EQUAL)
     {
+        if (strpos($columnName, '.') !== false) {
+            $columnName = explode('.', $columnName)[1];
+        }
+
+        $comparison = $this->conditionMap[$comparison];
+
         $this->query->filterBy($columnName, $value, $comparison);
         return $this;
     }
@@ -109,7 +130,7 @@ class PropelQueryWrapper extends AbstractQueryWrapper implements QueryWrapperInt
     public function createObject()
     {
         $className = $this->query->getModelName();
-        return new PropelObjectWrapper(new $className());
+        return PropelObjectWrapper::fromObject(new $className());
     }
 
     /**
