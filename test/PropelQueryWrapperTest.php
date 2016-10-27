@@ -371,14 +371,13 @@ class PropelQueryWrapperTest extends PHPUnit_Framework_TestCase
     {
         $wrappedTestClassQuery = new PropelQueryWrapper($this->testClassQuery);
 
-        $columnName = (string)rand();
+        $columnName = "FieldInteger";
         $order = (string)rand();
 
         $this->testClassQuery
             ->expects($this->once())
-            ->method('filterBy')
+            ->method('filterBy' . $columnName)
             ->with(
-                $this->equalTo($columnName),
                 $this->equalTo($order)
             );
 

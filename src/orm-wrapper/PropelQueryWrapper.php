@@ -3,13 +3,12 @@
 namespace Athens\Propel\ORMWrapper;
 
 use Propel\Runtime\ActiveQuery\ModelCriteria;
-use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\ActiveQuery\Criteria;
 
 use Athens\Core\ORMWrapper\AbstractQueryWrapper;
 use Athens\Core\ORMWrapper\ObjectWrapperInterface;
 use Athens\Core\ORMWrapper\QueryWrapperInterface;
-use AthensTest\Base\TestClassQuery;
+use Athens\Core\Etc\StringUtils;
 
 /**
  * Class PropelQueryWrapper
@@ -19,7 +18,7 @@ use AthensTest\Base\TestClassQuery;
 class PropelQueryWrapper extends AbstractQueryWrapper implements QueryWrapperInterface
 {
     use PropelORMWrapperTrait;
-    
+
     /** @var ModelCriteria */
     protected $query;
 
@@ -62,7 +61,7 @@ class PropelQueryWrapper extends AbstractQueryWrapper implements QueryWrapperInt
         $result = $this->query->{"findOneBy$primaryKeyPhpName"}($primaryKeyValue);
 
         $result = $result === null ? null : PropelObjectWrapper::fromObject($result);
-        
+
         return $result;
     }
 
@@ -94,14 +93,83 @@ class PropelQueryWrapper extends AbstractQueryWrapper implements QueryWrapperInt
      */
     public function filterBy($columnName, $value, $comparison = QueryWrapperInterface::CONDITION_EQUAL)
     {
-        if (strpos($columnName, '.') !== false) {
-            $columnName = explode('.', $columnName)[1];
-        }
-
         $comparison = $this->conditionMap[$comparison];
 
-        $this->query->filterBy($columnName, $value, $comparison);
+        /** @var boolean $columnNameIsQualified */
+        $columnNameIsQualified = strpos($columnName, '.') !== false;
+
+        /** @var string $modelName */
+        $modelName = $columnNameIsQualified === true ?
+            strtok($columnName, '.') : $this->query->getTableMap()->getPhpName();
+
+        /** @var string $columnName */
+        $columnName = $columnNameIsQualified === true ? $this->getUnqualifiedFieldName($columnName) : $columnName;
+
+        /** @var boolean $queryIsOnModel */
+        $queryIsOnModel = $modelName === $this->query->getTableMap()->getPhpName();
+
+        if ($queryIsOnModel === true) {
+            $this->query->{"filterBy" . $columnName}($value, $comparison);
+        } else {
+            $this->query->{"use{$modelName}Query"}()
+                ->{"filterBy" . $columnName}($value, $comparison)
+                ->endUse();
+        }
+
         return $this;
+    }
+
+    /**
+     * @param string $columnName
+     * @param mixed  $value
+     * @param string $condition
+     * @return boolean
+     */
+    public function canFilterBy($columnName, $value, $condition = QueryWrapperInterface::CONDITION_EQUAL)
+    {
+        return $this->canQueryColumnName($columnName);
+    }
+
+    /**
+     * @param string $columnName
+     * @param string $condition
+     * @return boolean
+     */
+    public function canOrderBy($columnName, $condition)
+    {
+        return $this->canQueryColumnName($columnName);
+    }
+
+    /**
+     * @param string $columnName
+     * @return boolean
+     */
+    protected function canQueryColumnName($columnName)
+    {
+
+        /** @var boolean $columnNameIsQualified */
+        $columnNameIsQualified = strpos($columnName, '.') !== false;
+
+        /** @var string $objectName */
+        $objectName = $columnNameIsQualified === true ? strtok($columnName, '.') : $this->getPascalCasedObjectName();
+
+        /** @var string $columnName */
+        $columnName = $columnNameIsQualified === true ? $this->getUnqualifiedFieldName($columnName) : $columnName;
+
+        if ($objectName === $this->getPascalCasedObjectName()) {
+            return in_array($columnName, $this->getUnqualifiedPascalCasedColumnNames()) === true;
+        } else {
+            /** @var \Propel\Runtime\Map\TableMap $foreignMap */
+            $foreignMap = $this->query->getTableMap()->getRelation($objectName)->getForeignTable();
+
+            foreach ($foreignMap->getColumns() as $column) {
+                if ($columnName === $column->getPhpName()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -147,77 +215,6 @@ class PropelQueryWrapper extends AbstractQueryWrapper implements QueryWrapperInt
     public function exists()
     {
         return $this->query->exists();
-    }
-
-    /**
-     * @param ModelCriteria $query
-     * @param string        $fieldName
-     * @return boolean
-     */
-    protected function queryContainsFieldName(ModelCriteria $query, $fieldName)
-    {
-        /** @var \Propel\Runtime\Map\TableMap $map */
-        $map = $query->getTableMap();
-        $objectName = $map->getPhpName();
-
-        foreach ($map->getColumns() as $column) {
-            $thisFieldName = $objectName . "." . StringUtils::toUpperCamelCase($column->getPhpName());
-
-            if ($fieldName === $thisFieldName) {
-                return true;
-            }
-        }
-
-        foreach ($map->getRelations() as $relation) {
-            $map = $relation->getForeignTable();
-            $objectName = $map->getPhpName();
-
-            foreach ($map->getColumns() as $column) {
-                $thisFieldName = $objectName . "." . StringUtils::toUpperCamelCase($column->getPhpName());
-
-                if ($fieldName === $thisFieldName) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-    
-    /**
-     * Adds a filter condition to a given query.
-     *
-     * Adaptively uses Propel's ::useXXXQuery() method for related tables.
-     *
-     * @param ModelCriteria $query
-     * @param string        $fieldName
-     * @param string        $criterion
-     * @param string        $criteria
-     * @return ModelCriteria
-     */
-    public function applyFilterToQuery(ModelCriteria $query, $fieldName, $criterion, $criteria)
-    {
-        /** @var boolean $fieldNameIsQualified */
-        $fieldNameIsQualified = strpos($fieldName, '.') !== false;
-
-        /** @var string $modelName */
-        $modelName = $fieldNameIsQualified === true ? strtok($fieldName, '.') : $query->getTableMap()->getPhpName();
-
-        /** @var string $fieldName */
-        $fieldName = $fieldNameIsQualified === true ? $this->getUnqualifiedFieldName($fieldName) : $fieldName;
-
-        /** @var boolean $queryIsOnModel */
-        $queryIsOnModel = $modelName === $query->getTableMap()->getPhpName();
-
-        if ($queryIsOnModel === true) {
-            $query = $query->{"filterBy" . $fieldName}($criterion, $criteria);
-        } else {
-            $query = $query->{"use{$modelName}Query"}()
-                ->{"filterBy" . $fieldName}($criterion, $criteria)
-                ->endUse();
-        }
-
-        return $query;
     }
 
     /**
