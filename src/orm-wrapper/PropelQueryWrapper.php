@@ -33,6 +33,8 @@ class PropelQueryWrapper extends AbstractQueryWrapper implements QueryWrapperInt
         QueryWrapperInterface::CONDITION_GREATER_THAN_OR_EQUAL => Criteria::GREATER_EQUAL,
         QueryWrapperInterface::CONDITION_LESS_THAN => Criteria::LESS_THAN,
         QueryWrapperInterface::CONDITION_LESS_THAN_OR_EQUAL => Criteria::LESS_EQUAL,
+        QueryWrapperInterface::CONDITION_IN => Criteria::IN,
+        QueryWrapperInterface::CONDITION_NOT_IN => Criteria::NOT_IN,
     ];
 
     /**
